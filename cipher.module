@@ -53,9 +53,9 @@ function cipher_form(){
     return $form;
 }
 
-// custom validating function
+// custom validation function using regular expression to check for letters, spaces, punctuation.
 function element_validate_string_or_character($element){
-    if ($element['#value'] == 14323) {
+    if(preg_match("/[^a-z\p{P} ]/i", $element['#value'])){
         form_error($element, t('The Phrase can only contain letters, spaces, and punctuation.'));
     }
 }
