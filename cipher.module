@@ -13,7 +13,7 @@ function cipher_menu(){
         'title' => 'Encryption Success',
         'page callback' => 'cipher_result',
         'access callback' => TRUE,
-        'type' => MENU_NORMAL_ITEM,
+        'type' => MENU_CALLBACK,
     );
     return $items;
 }
@@ -23,7 +23,7 @@ function cipher_form(){
     $form['shift_value'] = [
         '#title' => 'Shift Value',
         '#type' => 'textfield',
-        '#description' => t('The shift value is the number of places to shift each letter along the alphebet.'),
+        '#description' => t('The shift value is the number of places to shift each letter along the alphebet. It must be a number.'),
     ];
     $form['direction'] = [
         '#title' => 'Direction',
@@ -42,11 +42,20 @@ function cipher_form(){
     return $form;
 }
 
+// I chose to encrypt the information in the submit because it did not
+// feel right to pass the un-encrypted variables into the session.
 function cipher_form_submit($form, &$form_state){
-    
+    $value = $form_state['values']['shift_value'];
+    $direction = $form_state['values']['direction'];
+    $phrase = $form_state['values']['phrase'];
+
+    $_SESSION['result'] = $value . " " . $direction . " " . $phrase;
+
     $form_state['redirect'] = 'encryption_success';
 }
 
 function cipher_result(){
-    return 'goodbye';
+    $result = $_SESSION['result'];
+
+    return $result;
 }
