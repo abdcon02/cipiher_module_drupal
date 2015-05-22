@@ -45,17 +45,37 @@ function cipher_form(){
 // I chose to encrypt the information in the submit because it did not
 // feel right to pass the un-encrypted variables into the session.
 function cipher_form_submit($form, &$form_state){
-    $value = $form_state['values']['shift_value'];
+    $shift_value = $form_state['values']['shift_value'];
     $direction = $form_state['values']['direction'];
     $phrase = $form_state['values']['phrase'];
+// Sterilize the inputs
+    $phrase = strtolower($phrase);
+    $direction = strtolower($direction);
+// Create an array with a numerical key for each letter
+    $alpha = range('a','z');
 
-    $_SESSION['result'] = $value . " " . $direction . " " . $phrase;
+    $phrase_array = str_split($phrase);
+
+    foreach($phrase_array as $key => $character) {
+        $alpha_key = array_search($character, $alpha);
+
+        $phrase_array[$key] = $alpha[$alpha_key + $shift_value];
+    }
+
+    $phrase = implode("", $phrase_array);
+
+
+
+
+    $_SESSION['result'] = $phrase;
+    $_SESSION['shift_value'] = $shift_value;
 
     $form_state['redirect'] = 'encryption_success';
 }
 
 function cipher_result(){
     $result = $_SESSION['result'];
+    $shift_value = $_SESSION['shift_value'];
 
-    return $result;
+    return $result . ' and the value was ' . $shift_value;
 }
