@@ -19,27 +19,45 @@ function cipher_menu(){
 }
 
 function cipher_form(){
+// Trying out select and options in a form
+    $options = array();
+    $options['right'] = 'right';
+    $options['left'] = 'left';
+
     $form = array();
     $form['shift_value'] = [
         '#title' => 'Shift Value',
         '#type' => 'textfield',
         '#description' => t('The shift value is the number of places to shift each letter along the alphebet. It must be a number.'),
+        '#element_validate' => array('element_validate_integer_positive'),
+        '#required' => TRUE,
     ];
     $form['direction'] = [
         '#title' => 'Direction',
-        '#type' => 'textfield',
+        '#type' => 'select',
+        '#options' => $options,
         '#description' => t('The shift direction can be "right" or "left" and is the direction the cipher moves in.'),
+        '#required' => TRUE,
     ];
     $form['phrase'] = [
         '#title' => 'Phrase',
         '#type' => 'textfield',
         '#description' => t('The Phrase is your text to be encrypted. It must only be letters and punctuation'),
+        '#element_validate' => array('element_validate_string_or_character'),
+        '#required' => TRUE,
     ];
     $form['submit'] = [
         '#type' => 'submit',
         '#value' => 'Encrypt',
     ];
     return $form;
+}
+
+// custom validating function
+function element_validate_string_or_character($element){
+    if ($element['#value'] == 14323) {
+        form_error($element, t('The Phrase can only contain letters, spaces, and punctuation.'));
+    }
 }
 
 // I chose to encrypt the information in the submit because it did not
@@ -59,22 +77,23 @@ function cipher_form_submit($form, &$form_state){
 
     foreach($phrase_array as $key => $character) {
         $alpha_key = array_search($character, $alpha);
+        $shift_key;
 
 // add if direction is right, else direction is left and subtract shift value
 // nested if/elses take care of the looping alphabet
         if($direction == 'right') {
-            if($alpha_key + $shift_value > 25) {
-                $phrase_array[$key] = $alpha[$alpha_key + $shift_value - 26];
-            } else{
-                $phrase_array[$key] = $alpha[$alpha_key + $shift_value];
+            $shift_key = $alpha_key + $shift_value;
+            if($shift_key > 25) {
+                $shift_key -= 26;
             }
         } else {
-            if($alpha_key - $shift_value< 0) {
-                $phrase_array[$key] = $alpha[$alpha_key - $shift_value + 26];
-            } else {
-                $phrase_array[$key] = $alpha[$alpha_key - $shift_value];
+            $shift_key = $alpha_key - $shift_value;
+            if($shift_key < 0) {
+                $shift_key += 26;
             }
         }
+// and shift each letter to encrypt it
+        $phrase_array[$key] = $alpha[$shift_key];
     }
 
     $phrase = implode("", $phrase_array);
@@ -84,6 +103,7 @@ function cipher_form_submit($form, &$form_state){
 
     $_SESSION['result'] = $phrase;
     $_SESSION['shift_value'] = $shift_value;
+    $_SESSION['shift_direction'] = $direction;
 
     $form_state['redirect'] = 'encryption_success';
 }
@@ -91,6 +111,7 @@ function cipher_form_submit($form, &$form_state){
 function cipher_result(){
     $result = $_SESSION['result'];
     $shift_value = $_SESSION['shift_value'];
+    $direction = $_SESSION['shift_direction'];
 
-    return $result . ' and the value was ' . $shift_value;
+    return $result . ' and the value was ' . $shift_value . " and direction was " . $direction;
 }

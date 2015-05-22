@@ -3,6 +3,8 @@
 #### For an Assessment at Epicodus on: </br> May 22 2015
 
 ###Purpose
+To build a encryption cypher in PHP and turn it into a custom Drupal module. </br>
+Includes: </br>
 A custom form with 3 inputs. One input is be a shift value, one is be a direction, and the third is be the phrase to be encrypted. Then a user is redirected to a second page to show the result - the encoded phrase.
 </br>
 * The shift value is the number of places to shift each letter over.
