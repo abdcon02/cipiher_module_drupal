@@ -92,8 +92,10 @@ function cipher_form_submit($form, &$form_state){
                 $shift_key += 26;
             }
         }
-// and shift each letter to encrypt it
-        $phrase_array[$key] = $alpha[$shift_key];
+// and shift each letter to encrypt it if a letter
+        if(preg_match("/[a-z]/", $character)) {
+            $phrase_array[$key] = $alpha[$shift_key];
+        }
     }
 
     $phrase = implode("", $phrase_array);
