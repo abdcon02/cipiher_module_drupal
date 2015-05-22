@@ -68,7 +68,6 @@ function cipher_form_submit($form, &$form_state){
     $phrase = $form_state['values']['phrase'];
 // Sterilize the inputs
     $phrase = strtolower($phrase);
-    $direction = strtolower($direction);
     $shift_value = $shift_value % 26;
 // Create an array with a numerical key for each letter
     $alpha = range('a','z');
@@ -97,23 +96,12 @@ function cipher_form_submit($form, &$form_state){
             $phrase_array[$key] = $alpha[$shift_key];
         }
     }
-
     $phrase = implode("", $phrase_array);
-
-
-
-
     $_SESSION['result'] = $phrase;
-    $_SESSION['shift_value'] = $shift_value;
-    $_SESSION['shift_direction'] = $direction;
-
     $form_state['redirect'] = 'encryption_success';
 }
 
 function cipher_result(){
     $result = $_SESSION['result'];
-    $shift_value = $_SESSION['shift_value'];
-    $direction = $_SESSION['shift_direction'];
-
-    return $result . ' and the value was ' . $shift_value . " and direction was " . $direction;
+    return '<h3> Your Encrypted phrase is: ' . $result . '</h3>';
 }
