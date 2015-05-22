@@ -4,7 +4,8 @@ function cipher_menu(){
     $items = array();
     $items['encryption_form'] = array(
         'title' => 'Encryption Form',
-        'page callback' => 'cipher_form',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('cipher_form'),
         'access callback' => TRUE,
         'type' => MENU_NORMAL_ITEM,
     );
@@ -18,9 +19,34 @@ function cipher_menu(){
 }
 
 function cipher_form(){
-    return 'hello';
+    $form = array();
+    $form['shift_value'] = [
+        '#title' => 'Shift Value',
+        '#type' => 'textfield',
+        '#description' => t('The shift value is the number of places to shift each letter along the alphebet.'),
+    ];
+    $form['direction'] = [
+        '#title' => 'Direction',
+        '#type' => 'textfield',
+        '#description' => t('The shift direction can be "right" or "left" and is the direction the cipher moves in.'),
+    ];
+    $form['phrase'] = [
+        '#title' => 'Phrase',
+        '#type' => 'textfield',
+        '#description' => t('The Phrase is your text to be encrypted. It must only be letters and punctuation'),
+    ];
+    $form['submit'] = [
+        '#type' => 'submit',
+        '#value' => 'Encrypt',
+    ];
+    return $form;
 }
 
-function cipher_results(){
+function cipher_form_submit($form, &$form_state){
+    
+    $form_state['redirect'] = 'encryption_success';
+}
+
+function cipher_result(){
     return 'goodbye';
 }
